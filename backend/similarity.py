@@ -1,5 +1,6 @@
-from sentence_transformers import SentenceTransformer, util
-model = SentenceTransformer("all-MiniLM-L6-v2")
+from fast_sentence_transformers import FastSentenceTransformer,util
+
+model = FastSentenceTransformer("all-MiniLM-L6-v2")
 def compute_similarity(files):
     texts=[]
     for f in files:
