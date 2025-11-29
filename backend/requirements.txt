@@ -1,6 +1,6 @@
 flask
 flask-cors
 gunicorn
-fast-sentence-transformers
+sentence-transformers-lite
 numpy
 scikit-learn
