@@ -1,6 +1,6 @@
 flask
 flask-cors
 gunicorn
-sentence-transformers-lite
+jina-embeddings
 numpy
 scikit-learn
