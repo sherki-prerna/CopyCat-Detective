@@ -1,0 +1,7 @@
+flask
+flask-cors
+gunicorn
+torch
+sentence-transformers
+numpy
+scikit-learn
