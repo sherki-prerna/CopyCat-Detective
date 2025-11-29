@@ -3,3 +3,4 @@ Flask
 sentence-transformers
 numpy
 scikit-learn
+flask-cors
