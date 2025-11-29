@@ -1,7 +1,6 @@
 flask
 flask-cors
 gunicorn
-torch
-sentence-transformers
+fast-sentence-transformers
 numpy
 scikit-learn
