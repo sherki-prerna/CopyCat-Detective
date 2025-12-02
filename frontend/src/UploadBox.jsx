@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import Swal from "sweetalert2";
 import "./style.css";
 
 export default function UploadBox({ onMatrix }) {
@@ -18,28 +18,50 @@ export default function UploadBox({ onMatrix }) {
 
   const handleUpload = async () => {
     if (files.length < 2) {
-      alert("Please upload at least two files.");
+      Swal.fire("Oops!", "Please upload at least two files.", "error");
       return;
     }
 
     const form = new FormData();
     files.forEach((file) => form.append("files", file));
 
-    const res = await axios.post("http://localhost:5000/upload", form, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    try {
+      const res = await fetch("/api/similarity", {
+        method: "POST",
+        body: form,
+      });
 
-    onMatrix(
-      res.data,
-      files.map((f) => f.name)
-    );
+      const data = await res.json();
+
+      if (data.error) {
+        Swal.fire("Error", data.error, "error");
+        return;
+      }
+
+      // Build matrix (for now only pairwise between first 2 files)
+      const score = data.similarity;
+      const matrix = [
+        [1, score],
+        [score, 1],
+      ];
+
+      onMatrix(
+        matrix,
+        files.map((f) => f.name)
+      );
+
+      Swal.fire("Success!", "Similarity calculated!", "success");
+
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Could not reach the server!", "error");
+    }
   };
 
   return (
     <div className="upload-container">
       <h2>Upload Assignment Files</h2>
 
-      {/* Drag & Drop Box */}
       <div
         className={`dropzone ${dragActive ? "active" : ""}`}
         onDragOver={(e) => {
@@ -63,7 +85,6 @@ export default function UploadBox({ onMatrix }) {
         </label>
       </div>
 
-      {/* Show selected files */}
       {files.length > 0 && (
         <div className="file-list">
           <h4>Selected Files:</h4>
