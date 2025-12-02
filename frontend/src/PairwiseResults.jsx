@@ -18,6 +18,12 @@ export default function PairwiseResults({ matrix, filenames }) {
   // Sort by similarity highest → lowest
   pairs.sort((a, b) => b.score - a.score);
 
+  // Helper to avoid NaN
+  function safeScore(value) {
+    const num = Number(value);
+    return isNaN(num) ? 0 : num;
+  }
+
   // Function for text explanation
   function explanation(score) {
     const p = Math.round(score * 100);
@@ -26,7 +32,8 @@ export default function PairwiseResults({ matrix, filenames }) {
       return "These files are identical. High plagiarism detected.";
     if (p >= 70)
       return "High similarity. These files likely contain copied content.";
-    if (p >= 40) return "Moderate similarity. Review recommended.";
+    if (p >= 40)
+      return "Moderate similarity. Review recommended.";
     if (p >= 20) return "Some overlap found, but mostly safe.";
     return "Low similarity. No plagiarism detected.";
   }
@@ -34,9 +41,9 @@ export default function PairwiseResults({ matrix, filenames }) {
   return (
     <div className="pairs-container">
       <h2>Similarity Results</h2>
-
       {pairs.map((pair, index) => {
-        const percentage = Math.round(pair.score * 100);
+        const cleanedScore = safeScore(pair.score);
+        const percentage = Math.round(cleanedScore * 100);
 
         return (
           <div className="pair-card" key={index}>
@@ -44,10 +51,10 @@ export default function PairwiseResults({ matrix, filenames }) {
               {pair.file1} <span style={{ color: "#999" }}>vs</span>{" "}
               {pair.file2}
             </h3>
-
             <div className="pair-score">{percentage}% Similarity</div>
-
-            <p className="pair-explanation">{explanation(pair.score)}</p>
+            <p className="pair-explanation">
+              {explanation(cleanedScore)}
+            </p>
           </div>
         );
       })}
