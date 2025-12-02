@@ -1,8 +1,12 @@
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import normalize
 import numpy as np
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
+
+def clean_text(t):
+    return " ".join(t.lower().split())
 
 def compute_similarity(files):
     texts = []
@@ -12,12 +16,26 @@ def compute_similarity(files):
             content = f.read().decode("utf-8", errors="ignore")
         except:
             content = ""
-        texts.append(content)
+        texts.append(clean_text(content))
 
     if len(texts) < 2:
         return {"error": "Need at least two files"}
 
+    # Generate embeddings for ALL files
     embeddings = model.encode(texts)
-    score = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
 
-    return {"similarity": float(score)}
+    # Normalize for consistent cosine similarity
+    embeddings = normalize(embeddings)
+
+    # Compute full NxN similarity matrix
+    matrix = cosine_similarity(embeddings)
+
+    # Replace any NaN/inf with 0
+    matrix = np.nan_to_num(matrix, nan=0.0, posinf=1.0, neginf=0.0)
+
+    # Round for stable values like 1.0, 0.89
+    matrix = np.round(matrix, 4)
+
+    return {
+        "matrix": matrix.tolist()
+    }
