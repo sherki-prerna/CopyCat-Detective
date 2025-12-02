@@ -7,7 +7,10 @@ CORS(app)
 
 @app.get("/")
 def home():
-    return {"message": "Backend live", "status": "ok"}
+    return {
+        "status": "running",
+        "message": "CopyCat Detective Backend Active!"
+    }
 
 @app.post("/upload")
 def upload():
