@@ -1,29 +1,28 @@
-from jina_embeddings import Embeddings
-import numpy as np
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Load tiny, fast, lightweight model
-embedder = Embeddings(model_name="jina-embedding-tiny-en")
+# Load lightweight model
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 def compute_similarity(files):
     texts = []
 
-    # Read uploaded files as text
+    # Convert files to text
     for file in files:
         content = file.read().decode("utf-8", errors="ignore")
         texts.append(content)
 
-    # Need at least two files
     if len(texts) < 2:
-        return {"error": "Upload at least 2 files"}
+        return {"error": "At least 2 files required"}
 
-    # Get embeddings for all texts
-    embeddings = embedder.embed(texts)
+    embeddings = model.encode(texts)
 
-    # Cosine similarity between first two files
     score = cosine_similarity(
         [embeddings[0]],
         [embeddings[1]]
     )[0][0]
 
-    return {"similarity": float(score)}
+    return { 
+        "similarity": float(score),
+        "percentage": round(float(score) * 100, 2)
+    }
