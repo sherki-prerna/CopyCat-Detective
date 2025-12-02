@@ -15,12 +15,13 @@ def health_check():
 @app.route("/api/similarity", methods=["POST"])
 def similarity_api():
     uploaded_files = request.files.getlist("files")
-    
-    if not uploaded_files or len(uploaded_files) < 2:
+
+    if len(uploaded_files) < 2:
         return jsonify({"error": "Please upload at least two files"}), 400
 
     result = compute_similarity(uploaded_files)
     return jsonify(result)
+
 
 # ---------------- FRONTEND ----------------
 
