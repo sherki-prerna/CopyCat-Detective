@@ -5,7 +5,8 @@ import PairwiseResults from "./PairwiseResults";
 import "./style.css";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
-import detectiveCat from "./assets/ChatGPT Image Nov 28, 2025, 10_15_29 PM-min.png";
+import detectiveCat from "./assets/detective.png";
+
 
 export default function App() {
   useEffect(() => {

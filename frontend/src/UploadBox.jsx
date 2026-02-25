@@ -17,37 +17,38 @@ export default function UploadBox({ onMatrix }) {
   };
 
   const handleUpload = async () => {
-  if (files.length < 2) {
-    Swal.fire("Oops!", "Please upload at least two files.", "error");
-    return;
-  }
-
-  const form = new FormData();
-  files.forEach((file) => form.append("files", file));
-
-  try {
-    const res = await fetch("/api/similarity", {
-      method: "POST",
-      body: form,
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      Swal.fire("Error", data.error, "error");
+    if (files.length < 2) {
+      Swal.fire("Oops!", "Please upload at least two files.", "error");
       return;
     }
 
-    onMatrix(data.matrix, files.map((f) => f.name));
+    const form = new FormData();
+    files.forEach((file) => form.append("files", file));
 
-    Swal.fire("Success!", "Similarity calculated!", "success");
+    try {
+      const res = await fetch("http://localhost:5000/api/similarity", {
+        method: "POST",
+        body: form,
+      });
 
-  } catch (error) {
-    console.error(error);
-    Swal.fire("Error", "Could not reach the server!", "error");
-  }
-};
+      const data = await res.json();
 
+      if (data.error) {
+        Swal.fire("Error", data.error, "error");
+        return;
+      }
+
+      onMatrix(
+        data.matrix,
+        files.map((f) => f.name)
+      );
+
+      Swal.fire("Success!", "Similarity calculated!", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Could not reach the server!", "error");
+    }
+  };
 
   return (
     <div className="upload-container">
