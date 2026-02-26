@@ -34,7 +34,7 @@ jobs:
           # Copy only backend + deployment files
           cp -r ../backend/* .
           cp ../Dockerfile .
-          cp ../requirements.txt .
+          cp cp ../backend/requirements.txt .
 
           git add .
           git commit -m "Auto deploy from GitHub Actions" || echo "No changes"
