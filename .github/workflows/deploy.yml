@@ -1,29 +1,35 @@
-name: Deploy to Hugging Face Space
+# name: Deploy to Hugging Face Space
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v3
 
-      - name: Install Git LFS
-        run: |
-          git lfs install
+#       - name: Install Git LFS
+#         run: |
+#           git lfs install
 
-      - name: Push to Hugging Face Space
-        env:
-          HF_TOKEN: ${{ secrets.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 }}
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "github-actions"
+#       - name: Push to Hugging Face Space
+#         env:
+#           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+#         run: |
+#           git config --global user.email "github-actions@github.com"
+#           git config --global user.name "github-actions"
 
-          git remote add hf https://sherki-prerna:${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}@huggingface.co/spaces/sherki-prerna/Samp
+#           git remote add hf https://sherki-prerna:${HF_TOKEN}@huggingface.co/spaces/sherki-prerna/Samp
 
-          git push hf main --force
+#           git push hf main --force
+
+
+- name: Debug token
+  run: echo "Token length is ${#HF_TOKEN}"
+  env:
+    HF_TOKEN: ${{ secrets.HF_TOKEN }}
