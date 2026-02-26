@@ -1,5 +1,5 @@
 import io
-import similarity
+from backend import similarity
 
 
 # Test 1: Less than 2 files should return error
