@@ -11,31 +11,43 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Deploy clean build to HF
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          set -euo pipefail
+
+          if [ -z "${HF_TOKEN:-}" ]; then
+            echo "HF_TOKEN secret is not set"
+            exit 1
+          fi
+
           git config --global user.email "github-actions@github.com"
           git config --global user.name "github-actions"
 
-          # Clone Hugging Face Space
-          git clone https://huggingface.co/spaces/sherki-prerna/Samp hf-space
-          cd hf-space
+          ROOT_DIR="$(pwd)"
+          SPACE_DIR="${ROOT_DIR}/hf-space"
 
-          # Authenticate
-          git config credential.helper store
-          printf "https://sherki-prerna:%s@huggingface.co\n" "$HF_TOKEN" > ~/.git-credentials
+          git clone "https://sherki-prerna:${HF_TOKEN}@huggingface.co/spaces/sherki-prerna/Samp" "${SPACE_DIR}"
 
-          # Remove existing files
-          rm -rf *
+          rsync -av --delete \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude ".env" \
+            --exclude "__pycache__/" \
+            --exclude "*.pyc" \
+            "${ROOT_DIR}/" "${SPACE_DIR}/"
 
-          # Copy only backend + deployment files
-          cp -r ../backend/* .
-          cp ../Dockerfile .
-          cp cp ../backend/requirements.txt .
+          cd "${SPACE_DIR}"
 
-          git add .
-          git commit -m "Auto deploy from GitHub Actions" || echo "No changes"
-          git push origin main --force
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to deploy"
+            exit 0
+          fi
+
+          git commit -m "Auto deploy from GitHub Actions"
+          git push origin main
