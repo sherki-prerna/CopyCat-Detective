@@ -28,7 +28,7 @@ jobs:
           git config --global user.name "github-actions"
 
           ROOT_DIR="$(pwd)"
-          SPACE_DIR="${ROOT_DIR}/hf-space"
+          SPACE_DIR="$(mktemp -d)/hf-space"
 
           git clone "https://sherki-prerna:${HF_TOKEN}@huggingface.co/spaces/sherki-prerna/Samp" "${SPACE_DIR}"
 
@@ -36,6 +36,7 @@ jobs:
             --exclude ".git/" \
             --exclude ".github/" \
             --exclude ".env" \
+            --exclude "hf-space/" \
             --exclude "__pycache__/" \
             --exclude "*.pyc" \
             "${ROOT_DIR}/" "${SPACE_DIR}/"
