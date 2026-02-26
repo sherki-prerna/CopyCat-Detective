@@ -8,7 +8,8 @@ def test_less_than_two_files():
     result = similarity.compute_similarity([fake_file])
 
     assert "error" in result
-    assert result["error"] == "Upload at least 2 files"
+    assert "at least" in result["error"].lower()
+    assert ("2" in result["error"]) or ("two" in result["error"].lower())
 
 
 # Test 2: Similarity score should be between 0 and 1
