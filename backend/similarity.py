@@ -19,7 +19,7 @@ def compute_similarity(files):
         texts.append(clean_text(content))
 
     if len(texts) < 2:
-        return {"error": "Need at least two files"}
+        return {"error": "Upload at least 2 files"}
 
     # Generate embeddings for ALL files
     embeddings = model.encode(texts)
