@@ -12,12 +12,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-
-      - name: Debug token
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          echo "Token length is ${#HF_TOKEN}"
+        with:
+          fetch-depth: 0
 
       - name: Install Git LFS
         run: |
