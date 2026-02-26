@@ -39,6 +39,13 @@ jobs:
             --exclude "hf-space/" \
             --exclude "__pycache__/" \
             --exclude "*.pyc" \
+            --exclude ".DS_Store" \
+            --exclude "*.png" \
+            --exclude "*.jpg" \
+            --exclude "*.jpeg" \
+            --exclude "*.gif" \
+            --exclude "*.webp" \
+            --exclude "*.ico" \
             "${ROOT_DIR}/" "${SPACE_DIR}/"
 
           cd "${SPACE_DIR}"

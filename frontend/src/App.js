@@ -5,7 +5,6 @@ import PairwiseResults from "./PairwiseResults";
 import "./style.css";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
-import detectiveCat from "./assets/detective.png";
 
 
 export default function App() {
@@ -13,8 +12,7 @@ export default function App() {
   Swal.fire({
     title: "Welcome to CopyCat Detective!",
     text: "Catching Copycats Since Day One 🕵️‍♂️📄",
-    imageUrl: detectiveCat,
-    imageWidth: 150,
+    icon: "info",
     confirmButtonText: "Start",
     confirmButtonColor: "#1b63ff",
     showClass: {
