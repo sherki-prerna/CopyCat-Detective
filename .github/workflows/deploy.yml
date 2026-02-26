@@ -12,18 +12,30 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
-      - name: Install Git LFS
-        run: |
-          git lfs install
-
-      - name: Push to Hugging Face Space
+      - name: Deploy clean build to HF
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "github-actions"
-          git remote add hf https://sherki-prerna:${HF_TOKEN}@huggingface.co/spaces/sherki-prerna/Samp
-          git push hf main --force
+
+          # Clone Hugging Face Space
+          git clone https://huggingface.co/spaces/sherki-prerna/Samp hf-space
+          cd hf-space
+
+          # Authenticate
+          git config credential.helper store
+          printf "https://sherki-prerna:%s@huggingface.co\n" "$HF_TOKEN" > ~/.git-credentials
+
+          # Remove existing files
+          rm -rf *
+
+          # Copy only backend + deployment files
+          cp -r ../backend/* .
+          cp ../Dockerfile .
+          cp ../requirements.txt .
+
+          git add .
+          git commit -m "Auto deploy from GitHub Actions" || echo "No changes"
+          git push origin main --force
