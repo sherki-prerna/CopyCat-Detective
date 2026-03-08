@@ -3,7 +3,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import normalize
 import numpy as np
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+_model = None
+
+
+def get_model():
+    global _model
+    if _model is None:
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
 
 def clean_text(t):
     return " ".join(t.lower().split())
@@ -20,6 +27,8 @@ def compute_similarity(files):
 
     if len(texts) < 2:
         return {"error": "Upload at least 2 files"}
+
+    model = get_model()
 
     # Generate embeddings for ALL files
     embeddings = model.encode(texts)
