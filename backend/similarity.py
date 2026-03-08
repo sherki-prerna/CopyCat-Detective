@@ -12,6 +12,7 @@ def get_model():
         _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model
 
+
 def clean_text(t):
     return " ".join(t.lower().split())
 
@@ -30,10 +31,13 @@ def compute_similarity(files):
 
     model = get_model()
 
-    # Generate embeddings for ALL files
-    embeddings = model.encode(texts)
+    try:
+        # Generate embeddings for all files.
+        embeddings = model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
+    except Exception as exc:
+        return {"error": f"Embedding failed: {exc}"}
 
-    # Normalize for consistent cosine similarity
+    # Normalize for consistent cosine similarity.
     embeddings = normalize(embeddings)
 
     # Compute full NxN similarity matrix

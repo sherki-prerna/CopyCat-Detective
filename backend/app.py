@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 import os
-from similarity import compute_similarity
+try:
+    from backend.similarity import compute_similarity
+except ImportError:
+    from similarity import compute_similarity
 
 app = Flask(__name__, static_folder="static", static_url_path="")
 CORS(app)
@@ -19,7 +22,14 @@ def similarity_api():
     if len(uploaded_files) < 2:
         return jsonify({"error": "Please upload at least two files"}), 400
 
-    result = compute_similarity(uploaded_files)
+    try:
+        result = compute_similarity(uploaded_files)
+    except Exception as exc:
+        return jsonify({"error": f"Similarity computation failed: {exc}"}), 500
+
+    if "error" in result:
+        return jsonify(result), 500
+
     return jsonify(result)
 
 
