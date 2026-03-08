@@ -26,12 +26,17 @@ export default function UploadBox({ onMatrix }) {
     files.forEach((file) => form.append("files", file));
 
     try {
-      const res = await fetch("http://localhost:5000/api/similarity", {
+      const res = await fetch("/api/similarity", {
         method: "POST",
         body: form,
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        Swal.fire("Error", data.error || "Server request failed.", "error");
+        return;
+      }
 
       if (data.error) {
         Swal.fire("Error", data.error, "error");
