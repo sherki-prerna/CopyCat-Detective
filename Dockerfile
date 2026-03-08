@@ -49,6 +49,10 @@ WORKDIR /app
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Preload the embedding model during image build so first request doesn't
+# trigger a large runtime download that can fail/timeout on Spaces.
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
 # Copy backend source
 COPY backend/ .
 
@@ -57,4 +61,4 @@ COPY --from=frontend-build /app/frontend/build ./static
 
 EXPOSE 7860
 
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--timeout", "180", "app:app"]
